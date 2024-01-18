@@ -1,12 +1,12 @@
-# Домашнее задание к занятию "SQL. Часть 1 - `Согонов Алексей`"
+# Домашнее задание к занятию "Резервное копирование баз данных - `Согонов Алексей`"
 
 ### Задание 1
 
 ```
 
-select distinct district 
-from address a 
-where district like 'K%a'and district not like '% %';
+1.1.Можно использовать полный бэкап раз в неделею и дифференциальный каждый день это более надежный вид бэкапа, который позволит восстановить данные в за любой день недели.
+1.2.Можно использовать полный бэкап раз в неделю и инкрементный каждый час, данная схема позволит снизить место для хранения бэкапов и даст больше количество точек восстановления.
+
 
 ```
 
@@ -14,9 +14,8 @@ where district like 'K%a'and district not like '% %';
 
 ```
 
-select payment_id, amount, cast(payment_date as DATE) 
-from payment p 
-where amount > 10 and payment_date between '2005-06-15 00:00:01' and '2005-06-18 23:59:59';
+pg_dump dbname > dumpfile - создать резервную копию БД.
+psql dbname < dumpfile - восстановить БД.
 
 ```
 
@@ -24,22 +23,18 @@ where amount > 10 and payment_date between '2005-06-15 00:00:01' and '2005-06-18
 
 ```
 
-select *
-from rental r 
-order by rental_date desc
-limit 5;
+Создание инкрементного бэкапа:
+mysqlbackup --defaults-file=/home/dbadmin/my.cnf \
+  --incremental=optimistic --incremental-base=history:last_backup \
+  --backup-dir=/home/dbadmin/temp_dir \
+  --backup-image=incremental_image1.bi 
+   backup-to-image
+
+Восстановление бэкапа:
+mysqlbackup --defaults-file=<my.cnf> -uroot --backup-image=<inc_image_name> \
+  --backup-dir=<incBackupTmpDir> --datadir=<restoreDir> --incremental \
+  copy-back-and-apply-log
 
 ```
 
-
-### Задание 4
-
-```
-
-select lower(first_name), lower(last_name), replace(first_name, 'LL', 'PP')
-from customer c 
-where active > 0 and first_name like 'Kelly' or first_name like 'Willie';
-
-
-```
 ---
